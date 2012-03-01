@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.event.*;
 import javax.swing.*;
@@ -26,14 +28,13 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class TivooViewer extends JPanel {
 	// constants
-	public static final Dimension SIZE = new Dimension(120, 300);
+
 	public static final String BLANK = " ";
 	public static final String SUMMARY_PATH = "/home/chenji/workspace/Tivoo/html/summary.html";
 
 	// information area
-	private JLabel myLoadedFile;
-	private JLabel myAddedFilter;
-	private JLabel myAddedWriter;
+	private ArrayList<JLabel> myLabels = new ArrayList<JLabel>();
+	private String[] infoLabel = { "LoadedFile", "AddedFilter", "AddedWriter" };
 	// navigation
 	private JButton myLoadButton;
 	private JButton mySummaryAndDetailsButton;
@@ -48,12 +49,11 @@ public class TivooViewer extends JPanel {
 	 */
 	public TivooViewer(TivooSystem model) {
 		myModel = model;
-		// add components to frame
-		setLayout(new BorderLayout());//
-		// must be first since other panels may refer to page
+		for (int i = 0; i < infoLabel.length; ++i)
+			myLabels.add(new JLabel());
+		setLayout(new BorderLayout());
 		add(makeOperatePanel(), BorderLayout.NORTH);
 		add(makeInformationPanel(), BorderLayout.SOUTH);
-		// control the navigation
 		enableButtons();
 	}
 
@@ -93,26 +93,29 @@ public class TivooViewer extends JPanel {
 	// organize user's options for controlling/giving input to model
 	private JComponent makeOperatePanel() {
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(makeLoadAndOutputPanel(), BorderLayout.NORTH);
+		panel.add(makeLoadAndOutputPanel(), BorderLayout.WEST);
 		panel.add(makeFilterPanel());
-		panel.add(makeWriterPanel(), BorderLayout.SOUTH);
+		panel.add(makeWriterPanel(), BorderLayout.EAST);
 		return panel;
 	}
 
-	// make the panel where "would-be" clicked URL is displayed
 	private JComponent makeInformationPanel() {
-		// BLANK must be non-empty or status label will not be displayed in GUI
-		JPanel panel = new JPanel();
-		myLoadedFile = new JLabel("LoadedFile");
-		myLoadedFile.setPreferredSize(SIZE);
-		myAddedFilter = new JLabel("AddedFilter");
-		myAddedFilter.setPreferredSize(SIZE);
-		myAddedWriter = new JLabel("AddedWriter");
-		myAddedWriter.setPreferredSize(SIZE);
-		panel.add(myLoadedFile);
-		panel.add(myAddedFilter);
-		panel.add(myAddedWriter);
-		return panel;
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel infoPanel = new JPanel();
+		JPanel labelPanel = new JPanel();
+		Dimension infoLabelSize = new Dimension(200, 300);
+		Dimension labelSize = new Dimension(200, 20);
+		for (int i = 0; i < myLabels.size(); i++) {
+			myLabels.get(i).setPreferredSize(infoLabelSize);
+			myLabels.get(i).setVerticalAlignment(SwingConstants.TOP);
+			infoPanel.add(myLabels.get(i));
+			JLabel j = new JLabel(infoLabel[i]);
+			j.setPreferredSize(labelSize);
+			labelPanel.add(j);
+		}
+		mainPanel.add(labelPanel, BorderLayout.NORTH);
+		mainPanel.add(infoPanel, BorderLayout.SOUTH);
+		return mainPanel;
 	}
 
 	// make user-entered URL/text field and back/next buttons
@@ -120,6 +123,7 @@ public class TivooViewer extends JPanel {
 		JPanel panel = new JPanel();
 		myLoadButton = new JButton("Load");
 		myLoadButton.addActionListener(new LoadFileAction());
+
 		panel.add(myLoadButton);
 
 		JButton goButton = new JButton("Go");
@@ -186,7 +190,6 @@ public class TivooViewer extends JPanel {
 		JPanel panel = new JPanel();
 		mySummaryAndDetailsButton = new JButton("Add SummaryandDetails Writer");
 		mySummaryAndDetailsButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
@@ -212,25 +215,19 @@ public class TivooViewer extends JPanel {
 		}
 
 	}
-
+//twoDimentionalList must obey the infoLabel
 	private void update() {
-		String loadedfile = "<html><body>";
-		String addedfilter = "<html><body>";
-		String addedwriter = "<html><body>";
-		for (String s : myModel.getLoadedFile())
-			loadedfile += "" + s + "<br>";
-		if (myModel.getAddFilter() != null)
-			for (String s : myModel.getAddFilter())
-				addedfilter += "" + s + "<br>";
-		for (String s : myModel.getAddedWriter())
-			addedwriter += "" + s + "<br>";
-		loadedfile += "</body> </html>";
-		addedfilter += "</body> </html>";
-		addedwriter += "</body> </html>";
-		myLoadedFile.setText(loadedfile);
-		myAddedFilter.setText(addedfilter);
-		myAddedWriter.setText(addedwriter);
-
+		ArrayList<ArrayList<String>> twoDimentionalList = new ArrayList<ArrayList<String>>();
+		twoDimentionalList.add(myModel.getLoadedFile());
+		twoDimentionalList.add(myModel.getAddFilter());
+		twoDimentionalList.add(myModel.getAddedWriter());
+		for (ArrayList<String> list : twoDimentionalList) {
+			String toSet = "<html><body>";
+			for (String s : list)
+				toSet += "" + s + "<br>";
+			toSet += "</body> </html>";
+			myLabels.get(twoDimentionalList.indexOf(list)).setText(toSet);
+		}
 	}
 
 	private void displayinBrowser(String s) {
