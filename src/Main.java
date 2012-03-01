@@ -1,18 +1,33 @@
 import java.io.File;
 import java.util.*;
 
+import javax.swing.JFrame;
+
 import exception.TivooException;
 
 
 public class Main
-{
+{ public static final String TITLE = "TivooViewer";
     public static void main (String[] args)
     {
+    	
         TivooSystem model = new TivooSystem();
+        
         try
         {
 
-            File file1 = new File("./xml/dukecal.xml");
+  
+        	TivooViewer display = new TivooViewer(model);
+        	// create container that will work with Window manager
+        	JFrame frame = new JFrame(TITLE);
+        	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        	// add our user interface components to Frame and show it
+        	frame.getContentPane().add(display);
+        	frame.pack();
+        	frame.setVisible(true);
+        	
+        	
+ /*           File file1 = new File("./xml/dukecal.xml");
             File file2 = new File("./xml/DukeBasketBall.xml");
             File file3 = new File("./xml/TVTest.xml");
             File file4 = new File("./xml/googlecal.xml");
@@ -40,7 +55,7 @@ public class Main
 
             model.perform();
 
-
+*/
         }
         catch (TivooException e)
         {

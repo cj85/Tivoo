@@ -59,13 +59,13 @@ public abstract class Writer
         title.appendChild(new Text(myTitle + " Page"));
         head.appendChild(title);
 
-        Body body = new Body();
+      //  Body body = new Body();
 
-        html.appendChild(body);
+        //html.appendChild(body);
 
         H1 h1 = new H1();
         h1.appendChild(new Text(myTitle));
-        body.appendChild(h1);
+//        body.appendChild(h1);
 
         return html;
     }
@@ -147,5 +147,5 @@ public abstract class Writer
 
         table.appendChild(event_format);
     }
-
+    public  abstract String getName();
 }

@@ -10,7 +10,12 @@ public class FilterByKeyword extends FilterDecorator
 
     private String myKeyword;
 
-
+    public final String myName="Fiter by Keyword: ";
+    
+    public String getInformation(){
+// System.out.println(myName+myKeyword+"-----");/////////
+     return myName+myKeyword;
+    }
     public FilterByKeyword (String keyword)
     {
         super();

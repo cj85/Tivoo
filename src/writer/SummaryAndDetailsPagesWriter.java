@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.hp.gagawa.java.elements.Body;
 import com.hp.gagawa.java.elements.H2;
 import com.hp.gagawa.java.elements.Html;
 import com.hp.gagawa.java.elements.Table;
@@ -39,10 +41,11 @@ public class SummaryAndDetailsPagesWriter extends Writer
         {
             Html html = initializeHTMLDocument();
             Table details = new Table();
-
+            Body body = new Body();
+            html.appendChild(body);
             try
             {
-                html.appendChild(new H2().appendChild(new Text(event.get("title"))));
+                body.appendChild(new H2().appendChild(new Text(event.get("title"))));
 
                 generateDetail(details, "Start Time", event.get("startTime"));
                 generateDetail(details, "End Time", event.get("endTime"));
@@ -63,7 +66,8 @@ public class SummaryAndDetailsPagesWriter extends Writer
     {
 
         Html html = initializeHTMLDocument();
-
+        Body body = new Body();
+        html.appendChild(body);
         String[] days =
             {
                 "Sunday",
@@ -84,10 +88,11 @@ public class SummaryAndDetailsPagesWriter extends Writer
                 addEventToTable(events, table, event);
             }
             Text dayOfTheWeek = new Text(days[i]);
-            html.appendChild(new H2().appendChild(dayOfTheWeek));
-            html.appendChild(table);
+            body.appendChild(new H2().appendChild(dayOfTheWeek));
+            body.appendChild(table);
+            
         }
-
+           html.appendChild(body);
         write(html, filename);
     }
 
@@ -113,5 +118,9 @@ public class SummaryAndDetailsPagesWriter extends Writer
         }
         return dateSet;
     }
-
+    @Override
+    public String getName() {
+    // TODO Auto-generated method stub
+    return "Summary And Details";
+    }
 }

@@ -93,4 +93,11 @@ public class CalendarWriter extends Writer
         return format.format(calendar.getTime());
     }
 
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "CalendarWriter";
+	}
+
 }

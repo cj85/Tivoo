@@ -51,4 +51,11 @@ public class ListWriter extends Writer
         write(html, getMyDirectory());
     }
 
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "ListWriter";
+	}
+
 }

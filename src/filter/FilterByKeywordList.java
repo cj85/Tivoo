@@ -10,7 +10,7 @@ public class FilterByKeywordList extends FilterDecorator
 
     private List<String> myKeywordList;
 
-
+    public final String myName="Key word in general: ";
     public FilterByKeywordList (String[] keywordList)
     {
         super();
@@ -33,5 +33,10 @@ public class FilterByKeywordList extends FilterDecorator
                 }
             }
         }
+    }
+    @Override
+    public String getInformation() {
+    // TODO Auto-generated method stub
+    return myName+myKeywordList;
     }
 }

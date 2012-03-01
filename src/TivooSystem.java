@@ -9,7 +9,7 @@ import filter.*;
 
 public class TivooSystem
 {
-
+	 private ArrayList<String> myLoadedFile;
     private List<Event> myOriginalList;
     private List<Event> myFilteredList;
     private Set<Writer> myWriters;
@@ -25,8 +25,31 @@ public class TivooSystem
         myParserList.add(new NFLParser());
         myParserList.add(new TVParser());
     }
+    public ArrayList<String> getLoadedFile(){
+    	return myLoadedFile;
+    	}
+    public ArrayList<String> getAddFilter() {
+    	FilterDecorator filter = myHeadFilter;
+    	ArrayList<String> toReturn = new ArrayList<String>();
+    	if (filter != null) {
+    	while (true) {
+    	toReturn.add(filter.getInformation());
+    	if (filter.hasNext())
+    	filter = filter.next();
+    	else
+    	break;
+    	}
+    	}
+    	return toReturn;
 
-
+    	}
+    	public ArrayList<String> getAddedWriter(){
+    	ArrayList<String> toReturn=new ArrayList<String>();
+    	for(Writer w:myWriters)
+    	toReturn.add(w.getName());
+    	System.out.println(toReturn.size());//
+    	return toReturn;
+    	}
     public TivooSystem ()
     {
         myOriginalList = new ArrayList<Event>();

@@ -31,4 +31,5 @@ public abstract class Filter
     {
         return myOriginalList;
     }
+    public abstract String getInformation();
 }

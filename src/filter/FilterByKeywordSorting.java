@@ -12,7 +12,7 @@ public class FilterByKeywordSorting extends FilterDecorator
 {
 
     private String myKey;
-
+    public final String myName="key word sort: ";
 
     public FilterByKeywordSorting (String key)
     {
@@ -48,6 +48,11 @@ public class FilterByKeywordSorting extends FilterDecorator
         });
         myFilteredList.addAll(eventsThatContainThisKey);
         myFilteredList.addAll(eventsThatDontContainThisKey);
+    }
+    @Override
+    public String getInformation() {
+    // TODO Auto-generated method stub
+    return myName+myKey;
     }
 
 }

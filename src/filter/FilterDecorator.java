@@ -44,5 +44,11 @@ public abstract class FilterDecorator extends Filter
     {
         myDecoratedFilter = filter;
     }
+    public boolean hasNext(){
+        return myDecoratedFilter!=null;
+       }
+       public FilterDecorator next(){
+        return (FilterDecorator) myDecoratedFilter;
+       }
 
 }

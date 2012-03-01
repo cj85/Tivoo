@@ -69,4 +69,11 @@ public class ConflictWriter extends Writer
         }
         return false;
     }
+
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "Conflicts Writer";
+	}
 }

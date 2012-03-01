@@ -18,7 +18,7 @@ public class FilterByTimeFrame extends FilterDecorator
 
     private Date myStartTime, myEndTime;
 
-
+    public final String myName="Filter by Time Frame :";
     public FilterByTimeFrame (String startTime, String endTime)
     {
         super();
@@ -72,5 +72,11 @@ public class FilterByTimeFrame extends FilterDecorator
             throw new TivooSystemError("isWithinTimeFrame failed");
         }
     }
-
+    @Override
+    public String getInformation() {
+    // TODO Auto-generated method stub
+    DateFormat eventFormat = new SimpleDateFormat(Event.dateFormat);
+    // System.out.println(myName+"from "+eventFormat.format(myStartTime)+" to "+eventFormat.format(myEndTime)+"-----");////////////////
+    return myName+"from "+eventFormat.format(myStartTime)+" to "+eventFormat.format(myEndTime);
+    }
 }

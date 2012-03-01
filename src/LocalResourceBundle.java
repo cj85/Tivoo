@@ -16,7 +16,7 @@ public class LocalResourceBundle extends ResourceBundle
     @Override
     protected Object handleGetObject (String key)
     {
-        if(key.equals("dateFormat")) return "yyyy-MM-dd hh:mm:ss a";
+        if(key.equals("dateFormat")) return "yyyy-MM-dd HH:mm:ss";
         return null;
     }
 
