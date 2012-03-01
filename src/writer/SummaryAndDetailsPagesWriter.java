@@ -56,7 +56,7 @@ public class SummaryAndDetailsPagesWriter extends Writer
             String filename =
                     directory + "event" + events.indexOf(event) + ".html";
 
-            html.appendChild(details);
+            body.appendChild(details);
             write(html, filename);
         }
     }

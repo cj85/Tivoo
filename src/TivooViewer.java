@@ -82,7 +82,9 @@ public class TivooViewer extends JPanel {
 		}
 	}
 
-	// only enable buttons when useful to user
+	/**
+	 * only enable buttons when useful to user
+	 * */
 	private void enableButtons() {
 		myLoadButton.setEnabled(true);
 		mySummaryAndDetailsButton.setEnabled(true);
@@ -128,7 +130,6 @@ public class TivooViewer extends JPanel {
 				// TODO Auto-generated method stub
 				myModel.perform();
 				displayinBrowser(SUMMARY_PATH);
-				System.out.println("perform");
 			}
 		});
 		panel.add(goButton);
@@ -216,7 +217,6 @@ public class TivooViewer extends JPanel {
 		String loadedfile = "<html><body>";
 		String addedfilter = "<html><body>";
 		String addedwriter = "<html><body>";
-
 		for (String s : myModel.getLoadedFile())
 			loadedfile += "" + s + "<br>";
 		if (myModel.getAddFilter() != null)
