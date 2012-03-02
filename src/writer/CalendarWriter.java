@@ -3,6 +3,7 @@ package writer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -38,9 +39,9 @@ public class CalendarWriter extends Writer {
 		FilterDecorator myFilter = new FilterByTimeFrame(myStartDate, myEndDate);
 		myFilter.filter(events);
 		events = myFilter.getFilteredList();
-
-		Html html = initializeHTMLDocument();
-		Body body = new Body();
+		ArrayList<Object> htmlAndbody = initializeHTMLDocument();
+		Html html = (Html) htmlAndbody.get(0);
+		Body body = (Body) htmlAndbody.get(1);
 		html.appendChild(body);
 		Table table = new Table();
 		for (Event event : events) {
@@ -78,11 +79,11 @@ public class CalendarWriter extends Writer {
 		calendar.setTime(start);
 
 		int timeFrame = -1;
-		if (myTimeFrame.equals("DAY"))
+		if (myTimeFrame.equalsIgnoreCase("DAY"))
 			timeFrame = Calendar.DAY_OF_MONTH;
-		else if (myTimeFrame.equals("WEEK"))
+		else if (myTimeFrame.equalsIgnoreCase("WEEK"))
 			timeFrame = Calendar.WEEK_OF_YEAR;
-		else if (myTimeFrame.equals("MONTH"))
+		else if (myTimeFrame.equalsIgnoreCase("MONTH"))
 			timeFrame = Calendar.MONTH;
 
 		calendar.add(timeFrame, 1);
@@ -93,7 +94,8 @@ public class CalendarWriter extends Writer {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "CalendarWriter StartDate:<br>"+myStartDate+"<br>TimeFrame: "+myTimeFrame;
+		return "CalendarWriter StartDate:<br>" + myStartDate
+				+ "<br>TimeFrame: " + myTimeFrame;
 	}
 
 }

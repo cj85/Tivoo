@@ -1,6 +1,7 @@
 import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.PopupMenu;
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +31,13 @@ public class TivooViewer extends JPanel {
 	// constants
 
 	public static final String BLANK = " ";
-	public static final String PATH="/home/chenji/workspace/Tivoo/html/";
-	public static final String SUMMARY_PATH = PATH+"summary.html";
-	public static final String CONFILICT_PATH=PATH+"conflicts.html";
-	public static final String CALENDAR_PATH=PATH+"calendar.html";
+	public static final String PATH = "/home/chenji/workspace/Tivoo/html/";
+	public static final String SUMMARY_PATH = PATH + "summary.html";
+	public static final String CONFILICT_PATH = PATH + "conflicts.html";
+	public static final String CALENDAR_PATH = PATH + "calendar.html";
+	public static final String LIST_PATH = PATH + "list.html";
+
+	private ArrayList<String> myPathToOutPut = new ArrayList<String>();
 
 	// information area
 	private ArrayList<JLabel> myLabels = new ArrayList<JLabel>();
@@ -43,6 +47,7 @@ public class TivooViewer extends JPanel {
 	private JButton mySummaryAndDetailsButton;
 	private JButton myConflictButton;
 	private JButton myCalendarButton;
+	private JButton myListButton;
 	// favorites
 	private JButton myKeyWordFilterButton;
 	private JButton myTimeFrameFilterButton;
@@ -95,7 +100,6 @@ public class TivooViewer extends JPanel {
 		mySummaryAndDetailsButton.setEnabled(true);
 	}
 
-	// organize user's options for controlling/giving input to model
 	private JComponent makeOperatePanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(makeLoadAndOutputPanel(), BorderLayout.WEST);
@@ -123,7 +127,6 @@ public class TivooViewer extends JPanel {
 		return mainPanel;
 	}
 
-	// make user-entered URL/text field and back/next buttons
 	private JComponent makeLoadAndOutputPanel() {
 		JPanel panel = new JPanel();
 		myLoadButton = new JButton("Load");
@@ -138,7 +141,7 @@ public class TivooViewer extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				myModel.perform();
-				displayinBrowser(SUMMARY_PATH);
+					displayinBrowser(myPathToOutPut);
 			}
 		});
 		panel.add(goButton);
@@ -146,10 +149,9 @@ public class TivooViewer extends JPanel {
 		return panel;
 	}
 
-	// make buttons for setting favorites/home URLs
 	private JComponent makeFilterPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,1));
 		myKeyWordFilterButton = new JButton("Add KeywordFilter");
 		myKeyWordFilterButton.addActionListener(new ActionListener() {
 
@@ -161,7 +163,7 @@ public class TivooViewer extends JPanel {
 				update();
 			}
 		});
-		panel.add(myKeyWordFilterButton,BorderLayout.NORTH);
+		panel.add(myKeyWordFilterButton, BorderLayout.NORTH);
 
 		myTimeFrameFilterButton = new JButton("Add TimeFrameFilter");
 		myTimeFrameFilterButton.addActionListener(new ActionListener() {
@@ -183,43 +185,66 @@ public class TivooViewer extends JPanel {
 	}
 
 	private JComponent makeWriterPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4, 1));
 		mySummaryAndDetailsButton = new JButton("Add SummaryandDetails Writer");
 		mySummaryAndDetailsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				myModel.addSummaryAndDetailPagesWriter(SUMMARY_PATH);
+				myPathToOutPut.add(SUMMARY_PATH);
 				update();
 			}
 		});
-		panel.add(mySummaryAndDetailsButton,BorderLayout.NORTH);
-		
+		panel.add(mySummaryAndDetailsButton);
+
 		myConflictButton = new JButton("Add Conflicts Writer");
-		myConflictButton.addActionListener(new ActionListener(){
+		myConflictButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				myModel.addConflictWriter(CONFILICT_PATH);
+				myPathToOutPut.add(CONFILICT_PATH);
 				update();
-			}});
+			}
+		});
 		panel.add(myConflictButton);
-		
-		myCalendarButton=new JButton("Add Calendar Writer");
-		myCalendarButton.addActionListener(new ActionListener(){
+
+		myCalendarButton = new JButton("Add Calendar Writer");
+		myCalendarButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				myModel.addCalendarWriter(CALENDAR_PATH, JOptionPane
-						.showInputDialog("please input startTime yyyy-MM-dd HH:mm:ss"), JOptionPane
-						.showInputDialog("please input Time Frame"));
+				myModel.addCalendarWriter(
+						CALENDAR_PATH,
+						JOptionPane
+								.showInputDialog("please input startTime yyyy-MM-dd HH:mm:ss"),
+						JOptionPane
+								.showInputDialog("please input Time Frame\nMONTH or WEEK or DAY"));
+				myPathToOutPut.add(CALENDAR_PATH);
 				update();
-			}});
-		panel.add(myCalendarButton,BorderLayout.SOUTH);
+			}
+		});
+		panel.add(myCalendarButton);
+
+		myListButton = new JButton("Add List Writer");
+		myListButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				myModel.addListWriter(LIST_PATH);
+				myPathToOutPut.add(LIST_PATH);
+				update();
+			}
+		});
+		panel.add(myListButton);
+
 		return panel;
-		
+
 	}
 
 	/**
@@ -236,7 +261,8 @@ public class TivooViewer extends JPanel {
 		}
 
 	}
-//twoDimentionalList must obey the infoLabel
+
+	// twoDimentionalList must obey the infoLabel
 	private void update() {
 		ArrayList<ArrayList<String>> twoDimentionalList = new ArrayList<ArrayList<String>>();
 		twoDimentionalList.add(myModel.getLoadedFile());
@@ -251,9 +277,9 @@ public class TivooViewer extends JPanel {
 		}
 	}
 
-	private void displayinBrowser(String s) {
+	private void displayinBrowser(ArrayList<String> showpagepath) {
 		BrowserModel model = new BrowserModel();
-		BrowserViewer display = new BrowserViewer(model);
+		BrowserViewer display = new BrowserViewer(showpagepath,model);
 		// create container that will work with Window manager
 		JFrame frame = new JFrame("NanoBrowser");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -262,6 +288,6 @@ public class TivooViewer extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 		// start somewhere, less typing for debugging
-		display.showPage(s);
+		display.showPage(showpagepath.get(0));
 	}
 }

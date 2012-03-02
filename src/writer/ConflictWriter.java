@@ -1,5 +1,6 @@
 package writer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.gagawa.java.elements.Body;
@@ -10,69 +11,64 @@ import com.hp.gagawa.java.elements.Text;
 import com.hp.gagawa.java.elements.Tr;
 import event.Event;
 
+public class ConflictWriter extends Writer {
+	public ConflictWriter(String filename) {
+		setMyDirectory(filename);
+		setMyTitle("Conflict List");
+	}
 
-public class ConflictWriter extends Writer
-{
-    public ConflictWriter (String filename)
-    {
-        setMyDirectory(filename);
-        setMyTitle("Conflict List");
-    }
+	@Override
+	public void outputHTML(List<Event> events) {
+		ArrayList<Object> htmlAndbody = initializeHTMLDocument();
+		Html html = (Html) htmlAndbody.get(0);
+		Body body = (Body) htmlAndbody.get(1);
+		html.appendChild(body);
+		Table table = new Table();
+		for (Event event : events) {
+			if (hasConflict(event, events)) {
 
+				Tr event_format = new Tr();
 
-    @Override
-    public void outputHTML (List<Event> events)
-    {
+				event_format.appendChild((new Td()).appendChild(new Text(event
+						.get("title"))));
+				event_format.appendChild((new Td()).appendChild(new Text(event
+						.get("startTime").toString())));
+				event_format.appendChild((new Td()).appendChild(new Text(event
+						.get("endTime").toString())));
 
-        Html html = initializeHTMLDocument();
-        Body body = new Body();
-        html.appendChild(body);
-        Table table = new Table();
-        for (Event event : events)
-        {
-            if (hasConflict(event, events))
-            {
+				table.appendChild(event_format);
+			}
+		}
+		body.appendChild(table);
+		write(html, getMyDirectory());
+	}
 
-                Tr event_format = new Tr();
+	/**
+	 * Iterates through the set of events and checks if a given event overlaps
+	 * with those. If it does, return false.
+	 * 
+	 * @param event
+	 * @param events
+	 * @return
+	 */
+	private boolean hasConflict(Event event, List<Event> events) {
 
-                event_format.appendChild((new Td()).appendChild(new Text(event.get("title"))));
-                event_format.appendChild((new Td()).appendChild(new Text(event.get("startTime")
-                                                                              .toString())));
-                event_format.appendChild((new Td()).appendChild(new Text(event.get("endTime")
-                                                                              .toString())));
+		String start = event.get("startTime");
+		String end = event.get("endTime");
+		for (Event other : events) {
+			if (other != event) {
+				String otherStart = other.get("startTime");
+				String otherEnd = other.get("endTime");
+				if ((otherStart.compareTo(end) <= 0 && start
+						.compareTo(otherStart) <= 0)
+						|| (otherStart.compareTo(start) <= 0 && start
+								.compareTo(otherEnd) <= 0))
+					return true;
 
-                table.appendChild(event_format);
-            }
-        }
-        body.appendChild(table);
-        write(html, getMyDirectory());
-    }
-
-    /**
-     * Iterates through the set of events and checks if a given event overlaps with those. If it does, return false.
-     * @param event
-     * @param events
-     * @return
-     */
-    private boolean hasConflict (Event event, List<Event> events)
-    {
-
-        String start = event.get("startTime");
-        String end = event.get("endTime");
-        for (Event other : events)
-        {
-            if (other != event)
-            {
-                String otherStart = other.get("startTime");
-                String otherEnd = other.get("endTime");
-                if ((otherStart.compareTo(end) <= 0 && start.compareTo(otherStart) <= 0) ||
-                    (otherStart.compareTo(start) <= 0 && start.compareTo(otherEnd) <= 0)) return true;
-
-            }
-        }
-        return false;
-    }
-
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public String getName() {

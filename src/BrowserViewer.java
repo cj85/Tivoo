@@ -7,6 +7,8 @@ import java.net.URL;
 import javax.swing.event.*;
 import javax.swing.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A class used to display the viewer for a simple HTML browser.
@@ -25,27 +27,32 @@ public class BrowserViewer extends JPanel {
 	// constants
 	public static final Dimension SIZE = new Dimension(800, 600);
 	public static final String BLANK = " ";
+	public static HashMap<String,String> BUTTONLABEL=new HashMap<String,String>();
+	static{
+		BUTTONLABEL.put(TivooViewer.SUMMARY_PATH, "Summary and Details");
+		BUTTONLABEL.put(TivooViewer.LIST_PATH, "List");
+		BUTTONLABEL.put(TivooViewer.CONFILICT_PATH, "Conflict Events");
+		BUTTONLABEL.put(TivooViewer.CALENDAR_PATH, "Calendar");
+		
+	}
 
 	// web page
 	private JEditorPane myPage;
 	// information area
 	private JLabel myStatus;
 	// navigation
-	private JTextField myURLDisplay;
 	private JButton myBackButton;
 	private JButton myNextButton;
-	private JButton myHomeButton;
 	// favorites
-	private JButton myAddButton;
-	private DefaultComboBoxModel myFavorites;
-	private JComboBox myFavoritesDisplay;
 	// the real worker
 	protected BrowserModel myModel;
+	private ArrayList<String> myshowpage;
 
 	/**
 	 * Create a view of the given model of a web browser.
 	 */
-	public BrowserViewer(BrowserModel model) {
+	public BrowserViewer(ArrayList<String> showpagepath,BrowserModel model) {
+		myshowpage=showpagepath;
 		myModel = model;
 		// add components to frame
 		setLayout(new BorderLayout());
@@ -119,7 +126,6 @@ public class BrowserViewer extends JPanel {
 	private void update(String url) {
 		try {
 			myPage.setPage(url);
-			myURLDisplay.setText(url);
 			enableButtons();
 		} catch (IOException e) {
 			// should never happen since only checked URLs make it this far ...
@@ -134,7 +140,6 @@ public class BrowserViewer extends JPanel {
 		if (name != null) {
 			// update model and display results
 			myModel.addFavorite(name);
-			myFavorites.addElement(name);
 		}
 	}
 
@@ -142,7 +147,6 @@ public class BrowserViewer extends JPanel {
 	private void enableButtons() {
 		myBackButton.setEnabled(myModel.hasPrevious());
 		myNextButton.setEnabled(myModel.hasNext());
-		myHomeButton.setEnabled(myModel.getHome() != null);
 	}
 
 	// convenience method to create HTML page display
@@ -159,8 +163,22 @@ public class BrowserViewer extends JPanel {
 	// organize user's options for controlling/giving input to model
 	private JComponent makeInputPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
+		JPanel showpagepanel=new JPanel();
+		
+		for(final String s:myshowpage){
+			JButton button=new JButton(BUTTONLABEL.get(s));
+			button.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					showPage(s);
+				}});
+			showpagepanel.add(button);
+		}
+			
 		panel.add(makeNavigationPanel(), BorderLayout.NORTH);
-		panel.add(makePreferencesPanel(), BorderLayout.SOUTH);
+		panel.add(showpagepanel,BorderLayout.SOUTH);
 		return panel;
 	}
 
@@ -182,45 +200,20 @@ public class BrowserViewer extends JPanel {
 		myNextButton.addActionListener(new NextPageAction());
 		panel.add(myNextButton);
 
-		myHomeButton = new JButton("Home");
-		panel.add(myHomeButton);
 
 		// if user presses return, load/show the URL
-		myURLDisplay = new JTextField(35);
-		myURLDisplay.addActionListener(new ShowPageAction());
-		panel.add(myURLDisplay);
-
-		JButton goButton = new JButton("Go");
-		goButton.addActionListener(new ShowPageAction());
-		panel.add(goButton);
 
 		return panel;
 	}
 
 	// make buttons for setting favorites/home URLs
-	private JComponent makePreferencesPanel() {
-		JPanel panel = new JPanel();
 
-		myAddButton = new JButton("Add Favorite");
-		panel.add(myAddButton);
-
-		myFavorites = new DefaultComboBoxModel();
-		myFavorites.addElement("myFavorites ");
-		myFavoritesDisplay = new JComboBox(myFavorites);
-		panel.add(myFavoritesDisplay);
-
-		JButton setHomeButton = new JButton("Set Home");
-		panel.add(setHomeButton);
-
-		return panel;
-	}
 
 	/**
 	 * Inner class to factor out showing page associated with the entered URL
 	 */
 	private class ShowPageAction implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			showPage(myURLDisplay.getText());
 		}
 	}
 

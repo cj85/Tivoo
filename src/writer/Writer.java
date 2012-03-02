@@ -3,6 +3,7 @@ package writer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import com.hp.gagawa.java.elements.A;
 import com.hp.gagawa.java.elements.Body;
@@ -48,8 +49,9 @@ public abstract class Writer
      * Initialize HTML object by setting up the page with a page title.
      * @return
      */
-    protected Html initializeHTMLDocument ()
+    protected ArrayList<Object> initializeHTMLDocument ()
     {
+    	ArrayList<Object> toReturn=new ArrayList<Object>();
         Html html = new Html();
         Head head = new Head();
 
@@ -59,15 +61,16 @@ public abstract class Writer
         title.appendChild(new Text(myTitle + " Page"));
         head.appendChild(title);
 
-      //  Body body = new Body();
+        Body body = new Body();
 
-        //html.appendChild(body);
+        html.appendChild(body);
 
         H1 h1 = new H1();
         h1.appendChild(new Text(myTitle));
-//        body.appendChild(h1);
-
-        return html;
+        body.appendChild(h1);
+toReturn.add(html);
+toReturn.add(body);
+        return toReturn;
     }
 
     /**

@@ -89,8 +89,9 @@ public class TivooSystem {
 	 * @param keyword
 	 */
 	public void addFilterByKeyword(String keyword) {
+		if(keyword!=null){
 		FilterDecorator filter = new FilterByKeyword(keyword);
-		addFilter(filter);
+		addFilter(filter);}
 	}
 
 	/**
@@ -167,6 +168,7 @@ public class TivooSystem {
 	 */
 	public void addCalendarWriter(String directory, String startDate,
 			String timeFrame) {
+		
 		Writer writer = new CalendarWriter(directory, startDate, timeFrame);
 		addWriter(writer);
 	}
