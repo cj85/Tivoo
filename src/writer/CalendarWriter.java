@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import com.hp.gagawa.java.elements.Body;
 import com.hp.gagawa.java.elements.Html;
 import com.hp.gagawa.java.elements.Table;
 import com.hp.gagawa.java.elements.Td;
@@ -17,87 +19,81 @@ import exception.TivooIllegalDateFormat;
 import filter.FilterByTimeFrame;
 import filter.FilterDecorator;
 
+public class CalendarWriter extends Writer {
 
-public class CalendarWriter extends Writer
-{
+	String myStartDate;
+	String myTimeFrame;
 
-    String myStartDate;
-    String myTimeFrame;
+	public CalendarWriter(String filename, String date, String timeFrame) {
+		setMyDirectory(filename);
+		setMyTitle("Calendar Writer");
+		myStartDate = date;
+		myTimeFrame = timeFrame;
+	}
 
+	@Override
+	public void outputHTML(List<Event> events) {
 
-    public CalendarWriter (String filename, String date, String timeFrame)
-    {
-        setMyDirectory(filename);
-        setMyTitle("Calendar Writer");
-        myStartDate = date;
-        myTimeFrame = timeFrame;
-    }
+		String myEndDate = processDate();
+		FilterDecorator myFilter = new FilterByTimeFrame(myStartDate, myEndDate);
+		myFilter.filter(events);
+		events = myFilter.getFilteredList();
 
+		Html html = initializeHTMLDocument();
+		Body body = new Body();
+		html.appendChild(body);
+		Table table = new Table();
+		for (Event event : events) {
+			Tr event_format = new Tr();
 
-    @Override
-    public void outputHTML (List<Event> events)
-    {
+			event_format.appendChild((new Td()).appendChild(new Text(event
+					.get("title"))));
+			event_format.appendChild((new Td()).appendChild(new Text(event.get(
+					"startTime").toString())));
+			event_format.appendChild((new Td()).appendChild(new Text(event.get(
+					"endTime").toString())));
 
-        String myEndDate = processDate();
-        FilterDecorator myFilter =
-            new FilterByTimeFrame(myStartDate, myEndDate);
-        myFilter.filter(events);
-        events = myFilter.getFilteredList();
+			table.appendChild(event_format);
+		}
+		body.appendChild(table);
+		write(html, getMyDirectory());
+	}
 
-        Html html = initializeHTMLDocument();
+	/**
+	 * This method processes the start date by incrementing it by the specified
+	 * increment in time frame.
+	 * 
+	 * @return
+	 */
+	private String processDate() {
+		DateFormat format = new SimpleDateFormat(Event.dateFormat);
+		Date start = new Date();
+		try {
+			start = format.parse(myStartDate);
+		} catch (ParseException e) {
+			throw new TivooIllegalDateFormat();
+		}
 
-        Table table = new Table();
-        for (Event event : events)
-        {
-            Tr event_format = new Tr();
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(start);
 
-            event_format.appendChild((new Td()).appendChild(new Text(event.get("title"))));
-            event_format.appendChild((new Td()).appendChild(new Text(event.get("startTime")
-                                                                          .toString())));
-            event_format.appendChild((new Td()).appendChild(new Text(event.get("endTime")
-                                                                          .toString())));
+		int timeFrame = -1;
+		if (myTimeFrame.equals("DAY"))
+			timeFrame = Calendar.DAY_OF_MONTH;
+		else if (myTimeFrame.equals("WEEK"))
+			timeFrame = Calendar.WEEK_OF_YEAR;
+		else if (myTimeFrame.equals("MONTH"))
+			timeFrame = Calendar.MONTH;
 
-            table.appendChild(event_format);
-        }
-        html.appendChild(table);
-        write(html, getMyDirectory());
-    }
+		calendar.add(timeFrame, 1);
 
-    /**
-     * This method processes the start date by incrementing it by the specified increment in time frame.
-     * @return
-     */
-    private String processDate ()
-    {
-        DateFormat format = new SimpleDateFormat(Event.dateFormat);
-        Date start = new Date();
-        try
-        {
-            start = format.parse(myStartDate);
-        }
-        catch (ParseException e)
-        {
-            throw new TivooIllegalDateFormat();
-        }
-
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(start);
-
-        int timeFrame = -1;
-        if (myTimeFrame.equals("DAY")) timeFrame = Calendar.DAY_OF_MONTH;
-        else if (myTimeFrame.equals("WEEK")) timeFrame = Calendar.WEEK_OF_YEAR;
-        else if (myTimeFrame.equals("MONTH")) timeFrame = Calendar.MONTH;
-        
-        calendar.add(timeFrame, 1);
-
-        return format.format(calendar.getTime());
-    }
-
+		return format.format(calendar.getTime());
+	}
 
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "CalendarWriter";
+		return "CalendarWriter StartDate:<br>"+myStartDate+"<br>TimeFrame: "+myTimeFrame;
 	}
 
 }

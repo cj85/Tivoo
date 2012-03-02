@@ -1,6 +1,8 @@
 package writer;
 
 import java.util.List;
+
+import com.hp.gagawa.java.elements.Body;
 import com.hp.gagawa.java.elements.Html;
 import com.hp.gagawa.java.elements.Table;
 import com.hp.gagawa.java.elements.Td;
@@ -23,7 +25,8 @@ public class ConflictWriter extends Writer
     {
 
         Html html = initializeHTMLDocument();
-
+        Body body = new Body();
+        html.appendChild(body);
         Table table = new Table();
         for (Event event : events)
         {
@@ -41,7 +44,7 @@ public class ConflictWriter extends Writer
                 table.appendChild(event_format);
             }
         }
-        html.appendChild(table);
+        body.appendChild(table);
         write(html, getMyDirectory());
     }
 

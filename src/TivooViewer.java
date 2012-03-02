@@ -30,7 +30,10 @@ public class TivooViewer extends JPanel {
 	// constants
 
 	public static final String BLANK = " ";
-	public static final String SUMMARY_PATH = "/home/chenji/workspace/Tivoo/html/summary.html";
+	public static final String PATH="/home/chenji/workspace/Tivoo/html/";
+	public static final String SUMMARY_PATH = PATH+"summary.html";
+	public static final String CONFILICT_PATH=PATH+"conflicts.html";
+	public static final String CALENDAR_PATH=PATH+"calendar.html";
 
 	// information area
 	private ArrayList<JLabel> myLabels = new ArrayList<JLabel>();
@@ -38,6 +41,8 @@ public class TivooViewer extends JPanel {
 	// navigation
 	private JButton myLoadButton;
 	private JButton mySummaryAndDetailsButton;
+	private JButton myConflictButton;
+	private JButton myCalendarButton;
 	// favorites
 	private JButton myKeyWordFilterButton;
 	private JButton myTimeFrameFilterButton;
@@ -103,7 +108,7 @@ public class TivooViewer extends JPanel {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		JPanel infoPanel = new JPanel();
 		JPanel labelPanel = new JPanel();
-		Dimension infoLabelSize = new Dimension(200, 300);
+		Dimension infoLabelSize = new Dimension(200, 200);
 		Dimension labelSize = new Dimension(200, 20);
 		for (int i = 0; i < myLabels.size(); i++) {
 			myLabels.get(i).setPreferredSize(infoLabelSize);
@@ -137,22 +142,13 @@ public class TivooViewer extends JPanel {
 			}
 		});
 		panel.add(goButton);
-		JButton testButton = new JButton("test");
-		testButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				update();
-			}
-		});
-		panel.add(testButton);
 		return panel;
 	}
 
 	// make buttons for setting favorites/home URLs
 	private JComponent makeFilterPanel() {
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel(new BorderLayout());
 
 		myKeyWordFilterButton = new JButton("Add KeywordFilter");
 		myKeyWordFilterButton.addActionListener(new ActionListener() {
@@ -165,7 +161,7 @@ public class TivooViewer extends JPanel {
 				update();
 			}
 		});
-		panel.add(myKeyWordFilterButton);
+		panel.add(myKeyWordFilterButton,BorderLayout.NORTH);
 
 		myTimeFrameFilterButton = new JButton("Add TimeFrameFilter");
 		myTimeFrameFilterButton.addActionListener(new ActionListener() {
@@ -187,7 +183,7 @@ public class TivooViewer extends JPanel {
 	}
 
 	private JComponent makeWriterPanel() {
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel(new BorderLayout());
 		mySummaryAndDetailsButton = new JButton("Add SummaryandDetails Writer");
 		mySummaryAndDetailsButton.addActionListener(new ActionListener() {
 			@Override
@@ -197,8 +193,33 @@ public class TivooViewer extends JPanel {
 				update();
 			}
 		});
-		panel.add(mySummaryAndDetailsButton);
+		panel.add(mySummaryAndDetailsButton,BorderLayout.NORTH);
+		
+		myConflictButton = new JButton("Add Conflicts Writer");
+		myConflictButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				myModel.addConflictWriter(CONFILICT_PATH);
+				update();
+			}});
+		panel.add(myConflictButton);
+		
+		myCalendarButton=new JButton("Add Calendar Writer");
+		myCalendarButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				myModel.addCalendarWriter(CALENDAR_PATH, JOptionPane
+						.showInputDialog("please input startTime yyyy-MM-dd HH:mm:ss"), JOptionPane
+						.showInputDialog("please input Time Frame"));
+				update();
+			}});
+		panel.add(myCalendarButton,BorderLayout.SOUTH);
 		return panel;
+		
 	}
 
 	/**
@@ -224,7 +245,7 @@ public class TivooViewer extends JPanel {
 		for (ArrayList<String> list : twoDimentionalList) {
 			String toSet = "<html><body>";
 			for (String s : list)
-				toSet += "" + s + "<br>";
+				toSet += "-------------<br>" + s + "<br>";
 			toSet += "</body> </html>";
 			myLabels.get(twoDimentionalList.indexOf(list)).setText(toSet);
 		}
