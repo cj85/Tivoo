@@ -1,5 +1,9 @@
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
 import parser.*;
 import writer.*;
 import event.*;
@@ -287,6 +291,19 @@ public class TivooSystem {
 	private void clear() {
 		myOriginalList = new ArrayList<Event>();
 		myFilteredList = new ArrayList<Event>();
+	}
+
+	public void checkDateFormat(String date) throws ParseException {
+		DateFormat df = new SimpleDateFormat(PropertyResourceBundle.getBundle(
+				"myProperties_en").getString("dateFormat"));
+		df.parse(date);
+	}
+
+	public void checkDateFrame(String period) {
+		if (!period.equalsIgnoreCase("month"))
+			if (!period.equalsIgnoreCase("day"))
+				if (!period.equalsIgnoreCase("week"))
+					throw new TivooIllegalDateFormat();
 	}
 
 }

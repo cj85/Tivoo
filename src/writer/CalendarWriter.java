@@ -104,7 +104,6 @@ public class CalendarWriter extends Writer {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "CalendarWriter StartDate:<br>" + myStartDate
 				+ "<br>TimeFrame: " + myTimeFrame;
 	}

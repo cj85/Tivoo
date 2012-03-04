@@ -315,16 +315,13 @@ public abstract class Parser
     {
         DateFormat df = new SimpleDateFormat(oldFormat);
         Date date = new Date();
-        DateFormat eventFormat = new SimpleDateFormat(PropertyResourceBundle.getBundle("myProperties").getString("dateFormat"));
+        DateFormat eventFormat = new SimpleDateFormat(PropertyResourceBundle.getBundle("myProperties_en").getString("dateFormat"));
         try
         {
             date = df.parse(info);
         }
         catch (ParseException e)
         {
-            System.out.println(info);
-
-            System.out.println(oldFormat);
             e.printStackTrace();
             throw new TivooSystemError("reformatDateString failed");
         }

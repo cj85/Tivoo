@@ -3,8 +3,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.*;
+
+import exception.TivooIllegalDateFormat;
+import exception.TivooInvalidFeed;
+import exception.TivooUnrecognizedFeed;
 
 /**
  * A class used to display the viewer for a simple HTML browser.
@@ -22,8 +27,9 @@ import javax.swing.*;
 public class TivooViewer extends JPanel {
 	// constants
 
-	public static final String BLANK = " ";
-	public static final String PATH = "/home/chenji/workspace/Tivoo/html/";
+	public static final String BLANK = " ";// /home/chenji/workspace/Tivoo
+	public static final String PATH = "./html/";
+	public static final String XMLFOLDER_PATH = "./xml";
 	public static final String SUMMARY_PATH = PATH + "summary.html";
 	public static final String CONFILICT_PATH = PATH + "conflicts.html";
 	public static final String CALENDAR_PATH = PATH + "calendar.html";
@@ -60,7 +66,7 @@ public class TivooViewer extends JPanel {
 			myLabels.add(new JLabel());
 		setLayout(new BorderLayout());
 		add(makeOperatePanel(), BorderLayout.NORTH);
-		add(makeInformationPanel(), BorderLayout.SOUTH);
+		add(makeInformationPanel());
 		enableButtons();
 	}
 
@@ -80,12 +86,20 @@ public class TivooViewer extends JPanel {
 	}
 
 	private void loadfile() {
-		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			myModel.loadFile(file);
+		try {
+			JFileChooser fc = new JFileChooser(XMLFOLDER_PATH);
+			int returnVal = fc.showOpenDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				myModel.loadFile(file);
 
+			}
+		} catch (TivooInvalidFeed e) {
+			JOptionPane.showMessageDialog(myLoadButton,
+					"File Type Err, Please Load a XML File");
+		} catch (TivooUnrecognizedFeed e) {
+			JOptionPane.showMessageDialog(myLoadButton,
+					"Can't Deal With This XML File, No Correct Parse Exist");
 		}
 	}
 
@@ -176,14 +190,20 @@ public class TivooViewer extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String startTime = JOptionPane
-						.showInputDialog("please input startTime\n yyyy-MM-dd HH:mm:ss");
-				if (startTime == null || startTime.equalsIgnoreCase(""))
-					return;
-				String endTime = JOptionPane
-						.showInputDialog("please input end\n yyyy-MM-dd HH:mm:ss");
-				myModel.addFilterByTimeFrame(startTime, endTime);
-
+				try {
+					String startTime = JOptionPane
+							.showInputDialog("please input startTime\n yyyy-MM-dd HH:mm:ss");
+					if (startTime == null || startTime.equalsIgnoreCase(""))
+						return;
+					myModel.checkDateFormat(startTime);
+					String endTime = JOptionPane
+							.showInputDialog("please input end\n yyyy-MM-dd HH:mm:ss");
+					myModel.checkDateFormat(endTime);
+					myModel.addFilterByTimeFrame(startTime, endTime);
+				} catch (ParseException excp) {
+					JOptionPane.showMessageDialog(myTimeFrameFilterButton,
+							"Please In Put Correct Time Format");
+				}
 				update();
 			}
 		});
@@ -207,9 +227,16 @@ public class TivooViewer extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				ArrayList<String> keywordlist = new ArrayList<String>();
-				String keywordtosort = JOptionPane.showInputDialog("");// ////////////////////////
+				int i = 1;
+				String keyword;
+				while ((keyword = JOptionPane.showInputDialog("please input "
+						+ i + "th keyword")) != null
+						&& !keyword.equalsIgnoreCase("")) {
+					i++;
+					keywordlist.add(keyword);
+				}
+
 				myModel.addFilterByKeywordList(keywordlist);
 				update();
 			}
@@ -253,11 +280,23 @@ public class TivooViewer extends JPanel {
 						.showInputDialog("please input startTime yyyy-MM-dd HH:mm:ss");
 				if (startTime == null || startTime.equalsIgnoreCase(""))
 					return;
-				String period = JOptionPane
-						.showInputDialog("please input Time Frame\nMONTH or WEEK or DAY");
-				myModel.addCalendarWriter(CALENDAR_PATH, startTime, period);
-				myPathToOutPut.add(CALENDAR_PATH);
-				update();
+				try {
+					myModel.checkDateFormat(startTime);
+					String period = JOptionPane
+							.showInputDialog("please input Time Frame\nMONTH or WEEK or DAY");
+					myModel.checkDateFrame(period);
+					myModel.addCalendarWriter(CALENDAR_PATH, startTime, period);
+					myPathToOutPut.add(CALENDAR_PATH);
+					update();
+				} catch (ParseException e1) {
+					JOptionPane.showMessageDialog(myCalendarButton,
+							"Please In Put Correct Time Format");
+					
+				}
+				catch(TivooIllegalDateFormat e2){
+					JOptionPane.showMessageDialog(null,
+							"Please In Put Correct TimeFrame: month, week or day");
+				}
 			}
 		});
 		panel.add(myCalendarButton);
