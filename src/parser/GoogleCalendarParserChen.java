@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.PropertyResourceBundle;
 import org.w3c.dom.Node;
 import event.Event;
 
@@ -224,7 +225,7 @@ public class GoogleCalendarParserChen extends Parser
     {
         DateFormat df = new SimpleDateFormat(oldFormat);
         Date date = new Date();
-        DateFormat eventFormat = new SimpleDateFormat(Event.dateFormat);
+        DateFormat eventFormat = new SimpleDateFormat(PropertyResourceBundle.getBundle("myProperties").getString("dateFormat"));
 
         date = df.parse(info);
 

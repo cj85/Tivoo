@@ -9,7 +9,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+
 import com.hp.gagawa.java.elements.Body;
+
+import java.util.PropertyResourceBundle;
+
 import com.hp.gagawa.java.elements.Html;
 import com.hp.gagawa.java.elements.Table;
 import com.hp.gagawa.java.elements.Td;
@@ -24,7 +28,8 @@ public class CalendarWriter extends Writer {
 
 	String myStartDate;
 	String myTimeFrame;
-
+private String myEventDateFormat=PropertyResourceBundle.getBundle(
+		"myProperties_en").getString("dateFormat");
 	public CalendarWriter(String filename, String date, String timeFrame) {
 		setMyDirectory(filename);
 		setMyTitle("Calendar Writer");
@@ -67,7 +72,7 @@ public class CalendarWriter extends Writer {
 	 * @return
 	 */
 	private String processDate() {
-		DateFormat format = new SimpleDateFormat(Event.dateFormat);
+		DateFormat format = new SimpleDateFormat(myEventDateFormat);
 		Date start = new Date();
 		try {
 			start = format.parse(myStartDate);
@@ -97,5 +102,6 @@ public class CalendarWriter extends Writer {
 		return "CalendarWriter StartDate:<br>" + myStartDate
 				+ "<br>TimeFrame: " + myTimeFrame;
 	}
+
 
 }

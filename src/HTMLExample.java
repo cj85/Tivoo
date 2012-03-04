@@ -10,7 +10,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 
-/*
+/**
  * This class demos both the file chooser and Java's ability to display HTML Use
  * the file chooser to open an an HTML object. The rendered version of the HTML
  * should appear in the window.

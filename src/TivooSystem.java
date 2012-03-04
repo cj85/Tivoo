@@ -258,4 +258,5 @@ public class TivooSystem {
 		myOriginalList = new ArrayList<Event>();
 		myFilteredList = new ArrayList<Event>();
 	}
+
 }

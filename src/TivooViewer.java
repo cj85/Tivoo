@@ -2,16 +2,8 @@ import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.PopupMenu;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.event.*;
 import javax.swing.*;
 
 /**

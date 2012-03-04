@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,7 +33,7 @@ public abstract class Parser
 {
     protected ArrayList<Event> myEvents;
     protected NodeList myEventList;
-
+    protected ResourceBundle myResources;
 
     /**
      * Constructor initializes myEvents and myEventList
@@ -313,14 +315,17 @@ public abstract class Parser
     {
         DateFormat df = new SimpleDateFormat(oldFormat);
         Date date = new Date();
-        DateFormat eventFormat = new SimpleDateFormat(Event.dateFormat);
-
+        DateFormat eventFormat = new SimpleDateFormat(PropertyResourceBundle.getBundle("myProperties").getString("dateFormat"));
         try
         {
             date = df.parse(info);
         }
         catch (ParseException e)
         {
+            System.out.println(info);
+
+            System.out.println(oldFormat);
+            e.printStackTrace();
             throw new TivooSystemError("reformatDateString failed");
         }
         return eventFormat.format(date);

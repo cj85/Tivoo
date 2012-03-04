@@ -9,7 +9,6 @@ public class Event
 
     private HashMap<String, String> myFields = new HashMap<String, String>();
 
-    public static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 
     /**

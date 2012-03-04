@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.hp.gagawa.java.elements.Body;
+
+import java.util.PropertyResourceBundle;
+
 import com.hp.gagawa.java.elements.H2;
 import com.hp.gagawa.java.elements.Html;
 import com.hp.gagawa.java.elements.Table;
@@ -15,6 +18,8 @@ import event.Event;
 import exception.TivooEventKeywordNotFound;
 
 public class SummaryAndDetailsPagesWriter extends Writer {
+	private String myEventDateFormat = PropertyResourceBundle.getBundle(
+			"myProperties_en").getString("dateFormat");
 
 	public SummaryAndDetailsPagesWriter(String directory) {
 		setMyTitle("Summary and Details");
@@ -84,7 +89,7 @@ public class SummaryAndDetailsPagesWriter extends Writer {
 		for (int i = 0; i < 7; i++)
 			dateSet.put(i, new ArrayList<Event>());
 
-		SimpleDateFormat dateCreator = new SimpleDateFormat(Event.dateFormat);
+		SimpleDateFormat dateCreator = new SimpleDateFormat(myEventDateFormat);
 		for (Event event : events) {
 			try {
 				dateSet.get(dateCreator.parse(event.get("startTime")).getDay())
@@ -100,4 +105,5 @@ public class SummaryAndDetailsPagesWriter extends Writer {
 		// TODO Auto-generated method stub
 		return "Summary And Details";
 	}
+
 }

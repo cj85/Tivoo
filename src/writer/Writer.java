@@ -68,8 +68,8 @@ public abstract class Writer
         H1 h1 = new H1();
         h1.appendChild(new Text(myTitle));
         body.appendChild(h1);
-toReturn.add(html);
-toReturn.add(body);
+        toReturn.add(html);
+        toReturn.add(body);
         return toReturn;
     }
 

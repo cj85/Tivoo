@@ -4,14 +4,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.PropertyResourceBundle;
 import org.w3c.dom.Node;
 
-import event.Event;
-import exception.TivooException;
-
 public class DukeBasketballParser extends Parser {
-	private final String myOldFormat = "MM/dd/yyyy HH:mm:ss";
+	private final String myOldFormat = PropertyResourceBundle.getBundle(
+			"myProperties_en").getString("dukeballFormat");
+	private static String myEventDateFormat = PropertyResourceBundle.getBundle(
+			"myProperties_en").getString("dateFormat");
 
 	@Override
 	protected String getHead() {
@@ -59,7 +59,7 @@ public class DukeBasketballParser extends Parser {
 			int duration) {
 		DateFormat df = new SimpleDateFormat(oldFormat);
 		Date date = new Date();
-		DateFormat eventFormat = new SimpleDateFormat(Event.dateFormat);
+		DateFormat eventFormat = new SimpleDateFormat(myEventDateFormat);
 		try {
 			date = df.parse(info);
 		} catch (ParseException e) {

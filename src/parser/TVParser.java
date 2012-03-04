@@ -1,11 +1,12 @@
 package parser;
 
+import java.util.PropertyResourceBundle;
 import org.w3c.dom.Node;
 
 
 public class TVParser extends Parser
 {
-   private final String myOldFormat = "yyyyMMddHHmmss ZZZZZ";
+   private final String myOldFormat = PropertyResourceBundle.getBundle("myProperties_en").getString("tvFormat");
 
     @Override
     protected String getHead ()
@@ -35,6 +36,8 @@ public class TVParser extends Parser
     protected String getStartDate (Node currentEvent)
     {
         String result = getTagValue(currentEvent,"attribute::start");
+        
+        System.out.println(myOldFormat);
         return reformatDateString(result,myOldFormat);
     }
 
@@ -42,6 +45,8 @@ public class TVParser extends Parser
     protected String getEndDate (Node currentEvent)
     {
         String result = getTagValue(currentEvent,"attribute::stop");
+
+        System.out.println("info: " + result);
         return reformatDateString(result,myOldFormat);
     }
 
