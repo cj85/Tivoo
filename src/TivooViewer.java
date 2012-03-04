@@ -33,9 +33,12 @@ public class TivooViewer extends JPanel {
 
 	// information area
 	private ArrayList<JLabel> myLabels = new ArrayList<JLabel>();
-	private String[] infoLabel = { "LoadedFile", "AddedFilter", "AddedWriter" };
+	private String[] infoLabel = { "Loaded File", "Added Filter",
+			"Added Writer" };
 	// navigation
+	private JButton myGoButton;
 	private JButton myLoadButton;
+
 	private JButton mySummaryAndDetailsButton;
 	private JButton myConflictButton;
 	private JButton myCalendarButton;
@@ -43,6 +46,8 @@ public class TivooViewer extends JPanel {
 	// favorites
 	private JButton myKeyWordFilterButton;
 	private JButton myTimeFrameFilterButton;
+	private JButton myKeyWordSortingButton;
+	private JButton myKeyWordListButton;
 	// the real worker
 	protected TivooSystem myModel;
 
@@ -88,31 +93,42 @@ public class TivooViewer extends JPanel {
 	 * only enable buttons when useful to user
 	 * */
 	private void enableButtons() {
-		myLoadButton.setEnabled(true);
-		mySummaryAndDetailsButton.setEnabled(true);
+
+		myGoButton.setEnabled(myModel.readyToGo());
+		mySummaryAndDetailsButton
+				.setEnabled(myModel.summaryAndDetailPagesWriterFlag);
+		myConflictButton.setEnabled(myModel.conflictWriterFlag);
+		myCalendarButton.setEnabled(myModel.calendarWriterFlag);
+		myListButton.setEnabled(myModel.listWriterNumber);
 	}
 
 	private JComponent makeOperatePanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(makeLoadAndOutputPanel(), BorderLayout.WEST);
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(1, 3));
+		panel.add(makeLoadAndOutputPanel());
 		panel.add(makeFilterPanel());
-		panel.add(makeWriterPanel(), BorderLayout.EAST);
+		panel.add(makeWriterPanel());
 		return panel;
 	}
 
 	private JComponent makeInformationPanel() {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		JPanel infoPanel = new JPanel();
+		infoPanel.setLayout(new GridLayout(1, 3));
 		JPanel labelPanel = new JPanel();
+		labelPanel.setLayout(new GridLayout(1, 3));
 		Dimension infoLabelSize = new Dimension(200, 200);
-		Dimension labelSize = new Dimension(200, 20);
+		Dimension labelSize = new Dimension(200, 30);
 		for (int i = 0; i < myLabels.size(); i++) {
 			myLabels.get(i).setPreferredSize(infoLabelSize);
 			myLabels.get(i).setVerticalAlignment(SwingConstants.TOP);
 			infoPanel.add(myLabels.get(i));
-			JLabel j = new JLabel(infoLabel[i]);
-			j.setPreferredSize(labelSize);
-			labelPanel.add(j);
+			JLabel font = new JLabel();
+			font.setText("<html><body><font  size='5'>" + infoLabel[i]
+					+ "</font></body></html>");
+			font.setPreferredSize(labelSize);
+			font.setHorizontalAlignment(SwingConstants.CENTER);
+			labelPanel.add(font);
 		}
 		mainPanel.add(labelPanel, BorderLayout.NORTH);
 		mainPanel.add(infoPanel, BorderLayout.SOUTH);
@@ -126,30 +142,28 @@ public class TivooViewer extends JPanel {
 
 		panel.add(myLoadButton);
 
-		JButton goButton = new JButton("Go");
-		goButton.addActionListener(new ActionListener() {
+		myGoButton = new JButton("Go");
+		myGoButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				myModel.perform();
-					displayinBrowser(myPathToOutPut);
+				displayinBrowser(myPathToOutPut);
 			}
 		});
-		panel.add(goButton);
+		panel.add(myGoButton);
 
 		return panel;
 	}
 
 	private JComponent makeFilterPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4,1));
+		panel.setLayout(new GridLayout(4, 1));
 		myKeyWordFilterButton = new JButton("Add KeywordFilter");
 		myKeyWordFilterButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				myModel.addFilterByKeyword(JOptionPane
 						.showInputDialog("please input keyword"));
 				update();
@@ -162,9 +176,10 @@ public class TivooViewer extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				String startTime = JOptionPane
 						.showInputDialog("please input startTime\n yyyy-MM-dd HH:mm:ss");
+				if (startTime == null || startTime.equalsIgnoreCase(""))
+					return;
 				String endTime = JOptionPane
 						.showInputDialog("please input end\n yyyy-MM-dd HH:mm:ss");
 				myModel.addFilterByTimeFrame(startTime, endTime);
@@ -173,6 +188,33 @@ public class TivooViewer extends JPanel {
 			}
 		});
 		panel.add(myTimeFrameFilterButton);
+
+		myKeyWordSortingButton = new JButton("Add Field Sorter");
+		myKeyWordSortingButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String keywordtosort = JOptionPane
+						.showInputDialog("please input the Field to sort\n ex. title, startTime, endTime, summary etc");
+				myModel.addFilterByKeywordSorting(keywordtosort);
+				update();
+			}
+		});
+		panel.add(myKeyWordSortingButton);
+
+		myKeyWordListButton = new JButton("Add WordList Filter");
+		myKeyWordListButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ArrayList<String> keywordlist = new ArrayList<String>();
+				String keywordtosort = JOptionPane.showInputDialog("");// ////////////////////////
+				myModel.addFilterByKeywordList(keywordlist);
+				update();
+			}
+		});
+		panel.add(myKeyWordListButton);
 		return panel;
 	}
 
@@ -183,7 +225,6 @@ public class TivooViewer extends JPanel {
 		mySummaryAndDetailsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				myModel.addSummaryAndDetailPagesWriter(SUMMARY_PATH);
 				myPathToOutPut.add(SUMMARY_PATH);
 				update();
@@ -196,7 +237,6 @@ public class TivooViewer extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				myModel.addConflictWriter(CONFILICT_PATH);
 				myPathToOutPut.add(CONFILICT_PATH);
 				update();
@@ -209,13 +249,13 @@ public class TivooViewer extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				myModel.addCalendarWriter(
-						CALENDAR_PATH,
-						JOptionPane
-								.showInputDialog("please input startTime yyyy-MM-dd HH:mm:ss"),
-						JOptionPane
-								.showInputDialog("please input Time Frame\nMONTH or WEEK or DAY"));
+				String startTime = JOptionPane
+						.showInputDialog("please input startTime yyyy-MM-dd HH:mm:ss");
+				if (startTime == null || startTime.equalsIgnoreCase(""))
+					return;
+				String period = JOptionPane
+						.showInputDialog("please input Time Frame\nMONTH or WEEK or DAY");
+				myModel.addCalendarWriter(CALENDAR_PATH, startTime, period);
 				myPathToOutPut.add(CALENDAR_PATH);
 				update();
 			}
@@ -227,7 +267,6 @@ public class TivooViewer extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				myModel.addListWriter(LIST_PATH);
 				myPathToOutPut.add(LIST_PATH);
 				update();
@@ -247,7 +286,6 @@ public class TivooViewer extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			loadfile();
 			update();
 		}
@@ -267,11 +305,12 @@ public class TivooViewer extends JPanel {
 			toSet += "</body> </html>";
 			myLabels.get(twoDimentionalList.indexOf(list)).setText(toSet);
 		}
+		enableButtons();
 	}
 
 	private void displayinBrowser(ArrayList<String> showpagepath) {
 		BrowserModel model = new BrowserModel();
-		BrowserViewer display = new BrowserViewer(showpagepath,model);
+		BrowserViewer display = new BrowserViewer(showpagepath, model);
 		// create container that will work with Window manager
 		JFrame frame = new JFrame("NanoBrowser");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

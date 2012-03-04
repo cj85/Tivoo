@@ -1,6 +1,6 @@
 package filter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import event.Event;
 
@@ -10,11 +10,11 @@ public class FilterByKeywordList extends FilterDecorator
 
     private List<String> myKeywordList;
 
-    public final String myName="Key word in general: ";
-    public FilterByKeywordList (String[] keywordList)
+    public final String myName="Key word in List: ";
+    public FilterByKeywordList (ArrayList<String> keywordList)
     {
         super();
-        myKeywordList = Arrays.asList(keywordList);
+        myKeywordList =keywordList;
     }
 
 

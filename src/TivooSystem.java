@@ -43,6 +43,10 @@ public class TivooSystem {
 
 	}
 
+	public boolean readyToGo() {
+		return (!myLoadedFile.isEmpty()) && (!myWriters.isEmpty());
+	}
+
 	public ArrayList<String> getAddedWriter() {
 		ArrayList<String> toReturn = new ArrayList<String>();
 		for (Writer w : myWriters)
@@ -89,9 +93,10 @@ public class TivooSystem {
 	 * @param keyword
 	 */
 	public void addFilterByKeyword(String keyword) {
-		if(keyword!=null){
-		FilterDecorator filter = new FilterByKeyword(keyword);
-		addFilter(filter);}
+		if (keyword != null && !keyword.equalsIgnoreCase("")) {
+			FilterDecorator filter = new FilterByKeyword(keyword);
+			addFilter(filter);
+		}
 	}
 
 	/**
@@ -101,8 +106,10 @@ public class TivooSystem {
 	 * @param endTime
 	 */
 	public void addFilterByTimeFrame(String startTime, String endTime) {
-		FilterDecorator filter = new FilterByTimeFrame(startTime, endTime);
-		addFilter(filter);
+		if (startTime != null && endTime != null) {
+			FilterDecorator filter = new FilterByTimeFrame(startTime, endTime);
+			addFilter(filter);
+		}
 	}
 
 	/**
@@ -111,8 +118,10 @@ public class TivooSystem {
 	 * @param keyword
 	 */
 	public void addFilterByKeywordSorting(String keyword) {
-		FilterByKeywordSorting filter = new FilterByKeywordSorting(keyword);
-		addFilter(filter);
+		if (keyword != null && !keyword.equalsIgnoreCase("")) {
+			FilterByKeywordSorting filter = new FilterByKeywordSorting(keyword);
+			addFilter(filter);
+		}
 	}
 
 	/**
@@ -120,9 +129,11 @@ public class TivooSystem {
 	 * 
 	 * @param keywordList
 	 */
-	public void addFilterByKeywordList(String[] keywordList) {
-		FilterByKeywordList filter = new FilterByKeywordList(keywordList);
-		addFilter(filter);
+	public void addFilterByKeywordList(ArrayList<String> keywordList) {
+		if (!keywordList.isEmpty()) {
+			FilterByKeywordList filter = new FilterByKeywordList(keywordList);
+			addFilter(filter);
+		}
 	}
 
 	/**
@@ -144,9 +155,13 @@ public class TivooSystem {
 	 * 
 	 * @param directory
 	 */
+	public boolean summaryAndDetailPagesWriterFlag = true;
+
 	public void addSummaryAndDetailPagesWriter(String directory) {
 		Writer writer = new SummaryAndDetailsPagesWriter(directory);
 		addWriter(writer);
+		if (SummaryAndDetailsPagesWriter.getWriterNumber() > 0)
+			summaryAndDetailPagesWriterFlag = false;
 	}
 
 	/**
@@ -154,9 +169,13 @@ public class TivooSystem {
 	 * 
 	 * @param directory
 	 */
+	public boolean conflictWriterFlag = true;
+
 	public void addConflictWriter(String directory) {
 		Writer writer = new ConflictWriter(directory);
 		addWriter(writer);
+		if (ConflictWriter.getWriterNumber() > 0)
+			conflictWriterFlag = false;
 	}
 
 	/**
@@ -166,11 +185,17 @@ public class TivooSystem {
 	 * @param startDate
 	 * @param timeFrame
 	 */
+	public boolean calendarWriterFlag = true;
+
 	public void addCalendarWriter(String directory, String startDate,
 			String timeFrame) {
-		
-		Writer writer = new CalendarWriter(directory, startDate, timeFrame);
-		addWriter(writer);
+		if (startDate != null && !startDate.equalsIgnoreCase("")
+				&& timeFrame != null && !timeFrame.equalsIgnoreCase("")) {
+			Writer writer = new CalendarWriter(directory, startDate, timeFrame);
+			addWriter(writer);
+		}
+		if (CalendarWriter.getWriterNumber() > 0)
+			calendarWriterFlag = false;
 	}
 
 	/**
@@ -178,9 +203,13 @@ public class TivooSystem {
 	 * 
 	 * @param directory
 	 */
+	public boolean listWriterNumber = true;
+
 	public void addListWriter(String directory) {
 		Writer writer = new ListWriter(directory);
 		addWriter(writer);
+		if (ListWriter.getWriterNumber() > 0)
+			listWriterNumber = false;
 	}
 
 	/**
@@ -231,7 +260,8 @@ public class TivooSystem {
 	 */
 	private void filter() {
 		if (myHeadFilter == null) {
-			throw new TivooNoFilterSelected();
+			myFilteredList = myOriginalList;
+			return;
 		}
 		myHeadFilter.filter(myOriginalList);
 		myFilteredList = myHeadFilter.getFilteredList();

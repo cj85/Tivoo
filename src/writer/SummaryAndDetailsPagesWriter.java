@@ -18,10 +18,17 @@ import event.Event;
 import exception.TivooEventKeywordNotFound;
 
 public class SummaryAndDetailsPagesWriter extends Writer {
+	private static int existingWriterNumber = 0;
+
+	public static int getWriterNumber() {
+		return existingWriterNumber;
+	}
+
 	private String myEventDateFormat = PropertyResourceBundle.getBundle(
 			"myProperties_en").getString("dateFormat");
 
 	public SummaryAndDetailsPagesWriter(String directory) {
+		existingWriterNumber++;
 		setMyTitle("Summary and Details");
 		setMyDirectory(directory);
 	}

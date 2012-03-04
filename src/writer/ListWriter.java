@@ -14,8 +14,14 @@ import com.hp.gagawa.java.elements.Tr;
 import event.Event;
 
 public class ListWriter extends Writer {
+	private static int existingWriterNumber = 0;
+
+	public static int getWriterNumber() {
+		return existingWriterNumber;
+	}
 
 	public ListWriter(String filename) {
+		existingWriterNumber++;
 		setMyDirectory(filename);
 		setMyTitle("Sorted List");
 	}
